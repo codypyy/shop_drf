@@ -23,11 +23,12 @@ class TestBrandEndpoints:
 
     def test_brand_get(self, brand_factory, api_client):
 
-        brand_factory()
+        brand_factory.create_batch(3)
 
         response = api_client().get(self.endpoint)
 
         assert response.status_code == 200
+        assert len(json.loads(response.content)) == 3
 
 
 
@@ -37,8 +38,9 @@ class TestProductEndpoints:
 
     def test_product_get(self, product_factory, api_client):
 
-        product_factory()
+        product_factory.create_batch(2)
 
         response = api_client().get(self.endpoint)
 
         assert response.status_code == 200
+        assert len(json.loads(response.content)) == 2

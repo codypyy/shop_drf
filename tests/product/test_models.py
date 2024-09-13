@@ -13,7 +13,7 @@ class TestCategoryModel:
 class TestBrandModel:
     def test_str_method(self, brand_factory):
 
-        obj = brand_factory()
+        obj = brand_factory(name = "brand_test")
 
         assert obj.__str__() == "brand_test"
 
@@ -21,6 +21,6 @@ class TestBrandModel:
 class TestProductModel:
     def test_str_method(self, product_factory):
 
-        obj = product_factory()
+        obj = product_factory(name = "product_test")
 
         assert obj.__str__() == "product_test"
