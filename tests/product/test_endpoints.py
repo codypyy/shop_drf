@@ -36,11 +36,23 @@ class TestProductEndpoints:
 
     endpoint = '/api/product/'
 
-    def test_product_get(self, product_factory, api_client):
-
+    def test_get_all_product(self, product_factory, api_client):
         product_factory.create_batch(2)
-
         response = api_client().get(self.endpoint)
+        assert response.status_code == 200
+        assert len(json.loads(response.content)) == 2
 
+    def test_get_product_with_id(self, product_factory, api_client):
+        obj = product_factory(name="test_product")
+        response = api_client().get( f"{self.endpoint}{obj.id}/" )
+        assert response.status_code == 200
+        assert len(json.loads(response.content)) == 6
+
+    def test_get_product_with_category(self, product_factory, category_factory, api_client):
+        obj = category_factory(name="cat_1")
+        product_factory(category=obj)
+        product_factory(category=obj)
+        product_factory()
+        response = api_client().get( f"{self.endpoint}category/{obj.name}/" )
         assert response.status_code == 200
         assert len(json.loads(response.content)) == 2

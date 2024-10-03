@@ -56,3 +56,7 @@ class ProductLine(models.Model):
         for obj in filter_pl:
             if obj.order == self.order and obj.id != self.id:
                 raise ValidationError("duplicated order for same product")
+    
+
+    def __str__(self):
+        return self.sku
