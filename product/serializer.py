@@ -43,3 +43,44 @@ class ProductSerializer(serializers.ModelSerializer):
         ]
 
 
+    def create(self, validated_data):
+        brand_data = validated_data.pop('brand')
+        category_data = validated_data.pop('category')
+        product_lines_data = validated_data.pop('product_line')
+
+        brand_obj, created = Brand.objects.get_or_create(name=brand_data["name"])
+        category_obj, created = Category.objects.get_or_create(name=category_data["name"])
+
+        product = Product.objects.create(brand=brand_obj, category=category_obj, **validated_data)
+
+        for pld in product_lines_data:
+            ProductLine.objects.create(product=product, **pld)
+        
+        return product
+
+
+    def update(self, instance, validated_data):
+        
+        brand_data = validated_data.get('brand', None)
+        if brand_data:
+            brand_obj, created = Brand.objects.get_or_create(name=brand_data["name"])
+            instance.brand = brand_obj
+        
+
+        category_data = validated_data.get('category', None)
+        if category_data:
+            category_obj, created = Category.objects.get_or_create(name=category_data["name"])
+            instance.category = category_obj 
+
+        instance.name = validated_data.get("name", instance.name)
+        instance.descriptions = validated_data.get("descriptions", instance.descriptions)
+        instance.is_digital = validated_data.get("is_digital", instance.is_digital)
+        instance.save()
+
+        product_lines_data = validated_data.get('product_line', None)
+        if product_lines_data:
+            instance.product_line.all().delete()
+            for pld in product_lines_data:
+                ProductLine.objects.create(product=instance, **pld)
+
+        return instance
